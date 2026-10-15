@@ -7,10 +7,15 @@ export class LibraryService {
     this.repo = repository;
   }
 
+  QUANTIDADE_MAXIMA_EXEMPLARES = 5;
+
   // --- Operações com livros ---
   registerBook(title, author, quantity = 1) {
     if (this.repo.findBook(title)) {
       throw new Error("Livro já existe na biblioteca");
+    }
+    if (quantity > this.QUANTIDADE_MAXIMA_EXEMPLARES) {
+      throw new Error("Quantidade máxima é de 5 exemplares");
     }
     const book = new Book(title, author, quantity);
     this.repo.addBook(book);
@@ -33,6 +38,9 @@ export class LibraryService {
 
   // --- Operações com usuários ---
   registerUser(id, name) {
+    if (typeof id !== "number" || Number.isNaN(id) || !Number.isFinite(id) || id <= 0) {
+      throw new Error("Identificador inválido");
+    }
     if (this.repo.findUser(id)) {
       throw new Error("Usuário já cadastrado");
     }

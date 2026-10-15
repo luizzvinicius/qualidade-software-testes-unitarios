@@ -1,7 +1,9 @@
 // models/user.js
 export class User {
   constructor(id, name) {
-    if (!id) throw new Error("Identificador inválido");
+    if (typeof id !== "number" || Number.isNaN(id) || !Number.isFinite(id) || id <= 0) {
+      throw new Error("Identificador inválido");
+    }
     this.id = id;
     this.name = name || "";
     // loans é um Set com os títulos emprestados
