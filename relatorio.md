@@ -23,9 +23,8 @@ Liste os defeitos do código original que os testes do grupo revelaram. Se não 
 
 | Regra | Teste que revela o defeito (nome e arquivo) | Comportamento esperado | Comportamento obtido | Correção feita (arquivo e resumo) |
 |---|---|---|---|---|
-| Quantidade mínima e máxima de exemplares | lança erro quando a quantidade de exemplares ultrapassa o limite | Exceção ser lançada quando ultrapassar a quantidade máxima | Não é possível criar um livro se a quantidade de exemplares for maior que a quantidade permitida | Adicionada verificação no parâmtro quantidade |
+| Quantidade mínima e máxima de exemplares | lança erro quando a quantidade de exemplares ultrapassa o limite | Exceção ser lançada quando ultrapassar a quantidade máxima | Não é possível criar um livro se a quantidade de exemplares for maior que a quantidade permitida | Adicionada verificação no parâmetro quantidade e remoção do fallback |
 | Criação de ids únicos para usuários | Todos os testes do describe registerUser | Criar usuários com id apenas numéricos | Programa lança exceção caso um id não numérico ou inválido seja digitado | Adicionada validação para verificação do input ser numérico e positivo
-
 ---
 
 ## 2. Testabilidade
