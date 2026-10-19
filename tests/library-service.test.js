@@ -30,6 +30,13 @@ describe("LibraryService", () => {
       expect(service.listBooks()[0].quantity).toBe(bookDuna.quantity);
     });
 
+    test("registra um livro com 1 exemplar quando a quantidade não é informada", () => {
+      const book = service.registerBook(bookDuna.title, bookDuna.author);
+
+      expect(book.quantity).toBe(1);
+      expect(book.originalQuantity).toBe(1);
+    });
+
     test("lança erro ao cadastrar um livro já existente", () => {
       service.registerBook(bookDuna.title, bookDuna.author, 1);
 
