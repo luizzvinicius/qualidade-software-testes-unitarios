@@ -161,7 +161,7 @@ describe("LibraryService", () => {
       expect(() => service.registerUser(0, ana.name)).toThrow("Identificador inválido");
     });
 
-    test.each(["1", NaN, Infinity, -1])(
+    test.each(["1", NaN, Infinity, -1, 1.5])(
       "lança erro quando o identificador é inválido (%p)",
       (id) => {
         expect(() => service.registerUser(id, ana.name)).toThrow("Identificador inválido");
@@ -190,6 +190,10 @@ describe("LibraryService", () => {
 
     test("lança erro ao criar um usuário com identificador negativo", () => {
       expect(() => new User(-1, ana.name)).toThrow("Identificador inválido");
+    });
+
+    test("lança erro ao criar um usuário com identificador decimal", () => {
+      expect(() => new User(1.5, ana.name)).toThrow("Identificador inválido");
     });
   });
 
@@ -374,6 +378,12 @@ describe("LibraryService", () => {
 
     test("lança erro quando o usuário não existe", () => {
       expect(() => service.listLoans(ana.id)).toThrow("Usuário não encontrado");
+    });
+
+    test("não encontra o usuário quando o identificador é informado como texto", () => {
+      service.registerUser(ana.id, ana.name);
+
+      expect(() => service.listLoans("1")).toThrow("Usuário não encontrado");
     });
   });
 

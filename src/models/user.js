@@ -1,7 +1,7 @@
 // models/user.js
 export class User {
   constructor(id, name) {
-    if (typeof id !== "number" || Number.isNaN(id) || !Number.isFinite(id) || id <= 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       throw new Error("Identificador inválido");
     }
     this.id = id;

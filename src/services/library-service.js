@@ -39,7 +39,7 @@ export class LibraryService {
 
   // --- Operações com usuários ---
   registerUser(id, name) {
-    if (typeof id !== "number" || Number.isNaN(id) || !Number.isFinite(id) || id <= 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       throw new Error("Identificador inválido");
     }
     if (this.repo.findUser(id)) {

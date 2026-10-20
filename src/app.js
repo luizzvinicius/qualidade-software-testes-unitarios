@@ -40,7 +40,7 @@ function run() {
           break;
         }
         case "4": {
-          const id = ui.prompt("ID do usuário: ");
+          const id = ui.readUserId();
           const name = ui.prompt("Nome: ");
           service.registerUser(id, name);
           console.log("Usuário cadastrado.");
@@ -59,14 +59,14 @@ function run() {
           break;
         }
         case "6": {
-          const userId = ui.prompt("ID do usuário: ");
+          const userId = ui.readUserId();
           const title = ui.prompt("Título do livro: ");
           service.borrowBook(userId, title);
           console.log("Empréstimo realizado.");
           break;
         }
         case "7": {
-          const userId = ui.prompt("ID do usuário: ");
+          const userId = ui.readUserId();
           const title = ui.prompt("Título do livro: ");
           const { borrowDate, returnDate, days } = service.returnBook(userId, title);
           console.log("Devolução realizada.");
@@ -76,7 +76,7 @@ function run() {
           break;
         }
         case "8": {
-          const userId = ui.prompt("ID do usuário: ");
+          const userId = ui.readUserId();
           const loans = service.listLoansWithDates(userId)
             .map(loan => `${loan.title} (${loan.date.toLocaleString()})`);
           console.log(`Empréstimos de ${userId}: ${loans.join(", ") || "(nenhum)"}`);

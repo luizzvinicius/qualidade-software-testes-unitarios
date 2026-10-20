@@ -17,6 +17,10 @@ export function showMenu() {
   return prompt("Escolha uma opção: ");
 }
 
+export function readUserId() {
+  return Number(prompt("ID do usuário: "));
+}
+
 export function pause() {
   prompt("Enter para continuar...");
 }
