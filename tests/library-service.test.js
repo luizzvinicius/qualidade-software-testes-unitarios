@@ -123,6 +123,56 @@ describe("LibraryService", () => {
     });
   });
 
+  describe("searchBooks (NF01)", () => {
+    beforeEach(() => {
+      service.registerBook("Duna", "Frank Herbert", 2);
+      service.registerBook("Os Filhos de Duna", "Frank Herbert", 1);
+      service.registerBook("Clean Code", "Robert C. Martin", 1);
+      service.registerBook("Clean Architecture", "Robert C. Martin", 1);
+      service.registerBook("Dom Casmurro", "Machado de Assis", 3);
+    });
+
+    test("encontra o livro pelo título exato", () => {
+      const books = service.searchBooks("Dom Casmurro");
+
+      expect(books).toMatchObject([
+        { title: "Dom Casmurro", author: "Machado de Assis", quantity: 3 },
+      ]);
+    });
+
+    test("encontra os livros pela parte do título", () => {
+      const books = service.searchBooks("Clean");
+
+      expect(books.map((book) => book.title)).toEqual(["Clean Code", "Clean Architecture"]);
+    });
+
+    test("encontra os livros pela parte do nome do autor", () => {
+      const books = service.searchBooks("Herbert");
+
+      expect(books.map((book) => book.title)).toEqual(["Duna", "Os Filhos de Duna"]);
+    });
+
+    test.each(["DUNA", "duna", "dUnA"])(
+      "encontra os livros sem diferenciar maiúsculas e minúsculas (%p)",
+      (term) => {
+        const books = service.searchBooks(term);
+
+        expect(books.map((book) => book.title)).toEqual(["Duna", "Os Filhos de Duna"]);
+      }
+    );
+
+    test("devolve lista vazia quando nenhum livro corresponde ao termo", () => {
+      expect(service.searchBooks("Tolkien")).toEqual([]);
+    });
+
+    test.each(["", "   ", undefined])(
+      "devolve lista vazia quando o termo é vazio (%p)",
+      (term) => {
+        expect(service.searchBooks(term)).toEqual([]);
+      }
+    );
+  });
+
   describe("removeBook", () => {
     test("remove um livro do acervo quando todos os exemplares estão disponíveis (não emprestados)", () => {
       service.registerBook(bookDuna.title, bookDuna.author, bookDuna.quantity);

@@ -82,6 +82,19 @@ function run() {
           console.log(`Empréstimos de ${userId}: ${loans.join(", ") || "(nenhum)"}`);
           break;
         }
+        case "9": {
+          const term = ui.prompt("Termo de busca: ");
+          const books = service.searchBooks(term);
+          if (books.length === 0) {
+            console.log("Nenhum resultado encontrado");
+            break;
+          }
+          console.log("Livros encontrados:");
+          books.forEach(b => {
+            console.log(`${b.title} - ${b.author} | Disponível: ${b.quantity}`);
+          });
+          break;
+        }
         case "0":
           console.log("Até logo!");
           break;

@@ -27,6 +27,17 @@ export class LibraryService {
     return this.repo.listBooks();
   }
 
+  searchBooks(term) {
+    const normalizedTerm = (term ?? "").trim().toLowerCase();
+    
+    if (!normalizedTerm) return [];
+
+    return this.repo.listBooks().filter(
+      (book) =>
+        `${book.title} ${book.author}`.toLowerCase().includes(normalizedTerm)
+    );
+  }
+
   removeBook(title) {
     const book = this.repo.findBook(title);
     if (!book) throw new Error("Livro não encontrado");
