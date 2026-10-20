@@ -15,7 +15,7 @@ export class LibraryService {
       throw new Error("Livro já existe na biblioteca");
     }
     if (quantity > this.QUANTIDADE_MAXIMA_EXEMPLARES) {
-      throw new Error("Quantidade máxima é de 5 exemplares");
+      throw new Error("Quantidade máxima é 5 exemplares");
     }
     const book = new Book(title, author, quantity);
     this.repo.addBook(book);

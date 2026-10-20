@@ -45,9 +45,27 @@ describe("LibraryService", () => {
       );
     });
 
+    test("lança erro ao cadastrar um livro já existente com título em caixa diferente", () => {
+      service.registerBook("Dom Casmurro", "Machado de Assis", 1);
+
+      expect(() => service.registerBook("DOM CASMURRO", "Machado de Assis", 1)).toThrow(
+        "Livro já existe na biblioteca"
+      );
+    });
+
+    test.each([1, 5])(
+      "registra um livro com a quantidade limite de exemplares (%p)",
+      (quantity) => {
+        const book = service.registerBook(bookDuna.title, bookDuna.author, quantity);
+
+        expect(book.quantity).toBe(quantity);
+        expect(service.listBooks()[0].quantity).toBe(quantity);
+      }
+    );
+
     test("lança erro quando a quantidade de exemplares ultrapassa o limite", () => {
       expect(() => service.registerBook(bookDuna.title, bookDuna.author, 6)).toThrow(
-        "Quantidade máxima é de 5 exemplares"
+        "Quantidade máxima é 5 exemplares"
       );
     });
 
@@ -262,9 +280,9 @@ describe("LibraryService", () => {
       service.registerBook("Livro 3", "Autor 3", 1);
       service.registerBook("Livro 4", "Autor 4", 1);
 
-      service.borrowBook(ana.id, "Livro 1");
-      service.borrowBook(ana.id, "Livro 2");
-      service.borrowBook(ana.id, "Livro 3");
+      expect(service.borrowBook(ana.id, "Livro 1")).toBe(true)
+      expect(service.borrowBook(ana.id, "Livro 2")).toBe(true)
+      expect(service.borrowBook(ana.id, "Livro 3")).toBe(true)
 
       expect(() => service.borrowBook(ana.id, "Livro 4")).toThrow(
         "Usuário atingiu o limite de empréstimos (3)"
@@ -279,6 +297,20 @@ describe("LibraryService", () => {
       expect(() => service.borrowBook(ana.id, bookDuna.title)).toThrow(
         "Usuário já tem esse livro emprestado"
       );
+    });
+
+    test("permite que outro usuário empreste o mesmo livro", () => {
+      service.registerUser(ana.id, ana.name);
+      service.registerUser(bia.id, bia.name);
+      service.registerBook(bookDuna.title, bookDuna.author, 2);
+      service.borrowBook(ana.id, bookDuna.title);
+
+      const result = service.borrowBook(bia.id, bookDuna.title);
+
+      expect(result).toBe(true);
+      expect(service.listBooks()[0].quantity).toBe(0);
+      expect(service.listLoans(ana.id)).toEqual(["Duna"]);
+      expect(service.listLoans(bia.id)).toEqual(["Duna"]);
     });
   });
 
