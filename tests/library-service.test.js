@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { Book } from "../src/models/book.js";
 import { User } from "../src/models/user.js";
 import { InMemoryRepository } from "../src/repo/in-memory-repository.js";
@@ -322,7 +323,7 @@ describe("LibraryService", () => {
 
       const result = service.returnBook(ana.id, bookDuna.title);
 
-      expect(result).toBe(true);
+      expect(result.title).toBe("Duna");
       expect(service.listBooks()[0].quantity).toBe(1);
       expect(service.listLoans(ana.id)).toEqual([]);
     });
@@ -373,6 +374,84 @@ describe("LibraryService", () => {
 
     test("lança erro quando o usuário não existe", () => {
       expect(() => service.listLoans(ana.id)).toThrow("Usuário não encontrado");
+    });
+  });
+
+  describe("datas de empréstimo e devolução (NF02)", () => {
+    const dataEmprestimo = new Date("2026-03-01T10:00:00Z");
+
+    beforeEach(() => {
+      service.registerUser(ana.id, ana.name);
+      service.registerBook(bookDuna.title, bookDuna.author, 2);
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test("registra a data do empréstimo", () => {
+      service.borrowBook(ana.id, bookDuna.title, dataEmprestimo);
+
+      expect(service.listLoansWithDates(ana.id)).toEqual([
+        { title: "Duna", date: new Date("2026-03-01T10:00:00Z") },
+      ]);
+    });
+
+    test("usa a data atual quando a data do empréstimo não é informada", () => {
+      jest.useFakeTimers({ now: new Date("2026-05-10T08:30:00Z") });
+
+      service.borrowBook(ana.id, bookDuna.title);
+
+      expect(service.listLoansWithDates(ana.id)).toEqual([
+        { title: "Duna", date: new Date("2026-05-10T08:30:00Z") },
+      ]);
+    });
+
+    test("informa as datas e 0 dias quando a devolução ocorre no mesmo dia", () => {
+      service.borrowBook(ana.id, bookDuna.title, dataEmprestimo);
+
+      const result = service.returnBook(ana.id, bookDuna.title, new Date("2026-03-01T18:00:00Z"));
+
+      expect(result).toEqual({
+        title: "Duna",
+        borrowDate: new Date("2026-03-01T10:00:00Z"),
+        returnDate: new Date("2026-03-01T18:00:00Z"),
+        days: 0,
+      });
+      expect(service.listLoansWithDates(ana.id)).toEqual([]);
+    });
+
+    test("calcula os dias completos de um empréstimo de vários dias", () => {
+      service.borrowBook(ana.id, bookDuna.title, dataEmprestimo);
+
+      const result = service.returnBook(ana.id, bookDuna.title, new Date("2026-03-11T15:00:00Z"));
+
+      expect(result.days).toBe(10);
+    });
+
+    test.each([
+      ["2026-03-02T09:59:59.999Z", 0],
+      ["2026-03-02T10:00:00.000Z", 1],
+    ])("calcula os dias no limite de 24 horas (devolução em %s → %p dias)", (dataDevolucao, dias) => {
+      service.borrowBook(ana.id, bookDuna.title, dataEmprestimo);
+
+      const result = service.returnBook(ana.id, bookDuna.title, new Date(dataDevolucao));
+
+      expect(result.days).toBe(dias);
+    });
+
+    test("lança erro quando a data de devolução é anterior à do empréstimo", () => {
+      service.borrowBook(ana.id, bookDuna.title, dataEmprestimo);
+
+      expect(() =>
+        service.returnBook(ana.id, bookDuna.title, new Date("2026-03-01T09:59:59Z"))
+      ).toThrow("Data de devolução inválida");
+      expect(service.listBooks()[0].quantity).toBe(1);
+      expect(service.listLoans(ana.id)).toEqual(["Duna"]);
+    });
+
+    test("lança erro ao consultar datas de um usuário inexistente", () => {
+      expect(() => service.listLoansWithDates(bia.id)).toThrow("Usuário não encontrado");
     });
   });
 });

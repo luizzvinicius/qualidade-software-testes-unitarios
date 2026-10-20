@@ -68,13 +68,17 @@ function run() {
         case "7": {
           const userId = ui.prompt("ID do usuário: ");
           const title = ui.prompt("Título do livro: ");
-          service.returnBook(userId, title);
+          const { borrowDate, returnDate, days } = service.returnBook(userId, title);
           console.log("Devolução realizada.");
+          console.log(`Empréstimo: ${borrowDate.toLocaleString()}`);
+          console.log(`Devolução: ${returnDate.toLocaleString()}`);
+          console.log(`Dias de empréstimo: ${days}`);
           break;
         }
         case "8": {
           const userId = ui.prompt("ID do usuário: ");
-          const loans = service.listLoans(userId);
+          const loans = service.listLoansWithDates(userId)
+            .map(loan => `${loan.title} (${loan.date.toLocaleString()})`);
           console.log(`Empréstimos de ${userId}: ${loans.join(", ") || "(nenhum)"}`);
           break;
         }

@@ -6,16 +6,20 @@ export class User {
     }
     this.id = id;
     this.name = name || "";
-    // loans é um Set com os títulos emprestados
-    this.loans = new Set();
+    // loans é um Map com os títulos emprestados e a data de cada empréstimo
+    this.loans = new Map();
   }
 
-  borrow(title) {
-    this.loans.add(title);
+  borrow(title, date = new Date()) {
+    this.loans.set(title, date);
   }
 
   hasBorrowed(title) {
     return this.loans.has(title);
+  }
+
+  loanDate(title) {
+    return this.loans.get(title);
   }
 
   return(title) {
@@ -27,6 +31,10 @@ export class User {
   }
 
   listLoans() {
-    return Array.from(this.loans);
+    return Array.from(this.loans.keys());
+  }
+
+  listLoansWithDates() {
+    return Array.from(this.loans, ([title, date]) => ({ title, date }));
   }
 }

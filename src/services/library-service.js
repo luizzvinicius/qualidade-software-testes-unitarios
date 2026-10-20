@@ -8,6 +8,7 @@ export class LibraryService {
   }
 
   QUANTIDADE_MAXIMA_EXEMPLARES = 5;
+  MILISSEGUNDOS_POR_DIA = 24 * 60 * 60 * 1000;
 
   // --- Operações com livros ---
   registerBook(title, author, quantity = 1) {
@@ -54,7 +55,7 @@ export class LibraryService {
   }
 
   // --- Operações de empréstimo ---
-  borrowBook(userId, title) {
+  borrowBook(userId, title, date = new Date()) {
     const user = this.repo.findUser(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
@@ -68,11 +69,11 @@ export class LibraryService {
 
     // tudo ok -> registra empréstimo
     book.quantity -= 1;
-    user.borrow(book.title);
+    user.borrow(book.title, date);
     return true;
   }
 
-  returnBook(userId, title) {
+  returnBook(userId, title, date = new Date()) {
     const user = this.repo.findUser(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
@@ -81,17 +82,31 @@ export class LibraryService {
 
     if (!user.hasBorrowed(book.title)) throw new Error("Usuário não emprestou este livro");
 
+    const borrowDate = user.loanDate(book.title);
+    if (date < borrowDate) throw new Error("Data de devolução inválida");
+
     if (book.quantity + 1 > 5) throw new Error("Quantidade máxima atingida");
 
     // devolução
     book.quantity += 1;
     user.return(book.title);
-    return true;
+    return {
+      title: book.title,
+      borrowDate,
+      returnDate: date,
+      days: Math.floor((date - borrowDate) / this.MILISSEGUNDOS_POR_DIA),
+    };
   }
 
   listLoans(userId) {
     const user = this.repo.findUser(userId);
     if (!user) throw new Error("Usuário não encontrado");
     return user.listLoans();
+  }
+
+  listLoansWithDates(userId) {
+    const user = this.repo.findUser(userId);
+    if (!user) throw new Error("Usuário não encontrado");
+    return user.listLoansWithDates();
   }
 }
