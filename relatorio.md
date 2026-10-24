@@ -2,12 +2,7 @@
 
 **Integrantes:**
 
-1. João Victor Zignago
-2. Luiz Vinícius
-3. 
-4. 
-
-**Evoluções implementadas:** (por exemplo, NF02 e NF01)
+**Evoluções implementadas:** NF01 e NF02
 
 **Resultado final dos testes:** cole aqui as duas últimas linhas da saída de `npm test` (`Test Suites` e `Tests`).
 
@@ -89,17 +84,18 @@ tests\library-service.test.js:
 Ran 69 tests across 1 file. [18.00ms]
 ```
 
----
+***
 
 ## 1. Defeitos encontrados
 
 Liste os defeitos do código original que os testes do grupo revelaram. Se não encontraram nenhum, escreva "nenhum" e explique quais regras conferiram com mais cuidado.
 
-| Regra | Teste que revela o defeito (nome e arquivo) | Comportamento esperado | Comportamento obtido | Correção feita (arquivo e resumo) |
-|---|---|---|---|---|
-| Quantidade mínima e máxima de exemplares | lança erro quando a quantidade de exemplares ultrapassa o limite | Exceção ser lançada quando ultrapassar a quantidade máxima | Não é possível criar um livro se a quantidade de exemplares for maior que a quantidade permitida | Adicionada verificação no parâmetro quantidade e remoção do fallback |
-| Criação de ids únicos para usuários | Todos os testes do describe registerUser | Criar usuários com id apenas numéricos | Programa lança exceção caso um id não numérico ou inválido seja digitado | Adicionada validação para verificação do input ser numérico e positivo
----
+| Regra                                    | Teste que revela o defeito (nome e arquivo)                      | Comportamento esperado                                     | Comportamento obtido                                                                             | Correção feita (arquivo e resumo)                                      |
+| ---------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Quantidade mínima e máxima de exemplares | lança erro quando a quantidade de exemplares ultrapassa o limite | Exceção ser lançada quando ultrapassar a quantidade máxima | Não é possível criar um livro se a quantidade de exemplares for maior que a quantidade permitida | Adicionada verificação no parâmetro quantidade e remoção do fallback   |
+| Criação de ids únicos para usuários      | Todos os testes do describe registerUser                         | Criar usuários com id apenas numéricos                     | Programa lança exceção caso um id não numérico ou inválido seja digitado                         | Adicionada validação para verificação do input ser numérico e positivo |
+
+***
 
 ## 2. Testabilidade
 
@@ -107,12 +103,11 @@ Liste os defeitos do código original que os testes do grupo revelaram. Se não 
 
 > O método borrow passou a receber date como parâmetro e a estrutura de armazenamento passou de um Set para um Map. Além disso existem alguns testes que garantem o comportamento desse método, como por exemplo: "registra empréstimo, verifica presença e conta os títulos".
 
-
 **b)** Aponte um trecho do projeto **original** em que a regra de negócio já estava separada da interface, e explique por que isso facilitou escrever os testes da Parte 1.
 
 > No projeto original, o método borrowBook do LibraryService já reunia todas as regras do empréstimo sem usar prompt nem console.log. Ele recebia os dados por parâmetro e lançava um erro quando alguma regra era violada.
 
----
+***
 
 ## 3. Cobertura
 
@@ -136,12 +131,6 @@ Tests:       69 passed, 69 total
 Snapshots:   0 total
 Time:        0.71 s, estimated 1 s
 ```
-
-Para cada trecho não coberto (coluna `Uncovered Line #s`), explique o que é e por que ficou sem teste.
-
-| Arquivo e linha | O que o trecho faz | Por que não foi coberto |
-|---|---|---|
-|  |  |  |
 
 ---
 
